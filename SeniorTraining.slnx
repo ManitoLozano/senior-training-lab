@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Fulfillment/">
+    <Project Path="src/Fulfillment/Fulfillment.Api/Fulfillment.Api.csproj" />
+    <Project Path="src/Fulfillment/Fulfillment.Application/Fulfillment.Application.csproj" />
+    <Project Path="src/Fulfillment/Fulfillment.Domain/Fulfillment.Domain.csproj" />
+    <Project Path="src/Fulfillment/Fulfillment.Infrastructure/Fulfillment.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Sales/">
+    <Project Path="src/Sales/Sales.Api/Sales.Api.csproj" />
+    <Project Path="src/Sales/Sales.Application/Sales.Application.csproj" />
+    <Project Path="src/Sales/Sales.Domain/Sales.Domain.csproj" />
+    <Project Path="src/Sales/Sales.Infrastructure/Sales.Infrastructure.csproj" />
+  </Folder>
+</Solution>
