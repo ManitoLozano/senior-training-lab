@@ -29,8 +29,17 @@ public class OrderConfiguration: IEntityTypeConfiguration<Order> {
             .IsRequired();
         
         builder.HasOne(o => o.Customer)
-            .WithMany()
+            .WithMany() // Não existe propriedade para mostrar o OrdersWithCustomers pq a relação n gera uma entidade
             .HasForeignKey(o => o.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(o => o.Items)
+            .WithOne(o => o.Order)
+            .HasForeignKey(o => o.OrderId)
+            .OnDelete(DeleteBehavior.Cascade); // Assim o banco consegue remover os orderItems com o orderId igual
+        
+        // o EF quando trazer os itens consegue preencher nosso _itens private do Order.cs
+        builder.Navigation(o => o.Items)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

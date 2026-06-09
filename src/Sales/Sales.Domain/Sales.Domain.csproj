@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="OrderItems\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
       <HintPath>..\..\..\..\..\..\.nuget\packages\microsoft.extensions.configuration.abstractions\10.0.8\lib\net10.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
     </Reference>
