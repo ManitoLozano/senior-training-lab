@@ -8,10 +8,7 @@
     <Folder Include="Interfaces\OrdersItems\" />
     <Folder Include="Models\Auth\" />
     <Folder Include="Models\Fulfillment\" />
-    <Folder Include="Models\Orders\" />
-    <Folder Include="Services\Orders\" />
     <Folder Include="Validators\OrderItems\" />
-    <Folder Include="Validators\Orders\" />
   </ItemGroup>
 
   <ItemGroup>

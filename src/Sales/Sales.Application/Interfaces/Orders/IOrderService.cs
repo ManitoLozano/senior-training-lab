@@ -1,6 +1,13 @@
+using Sales.Application.Models.Orders;
+
 namespace Sales.Application.Interfaces.Orders;
 
 public interface IOrderService
 {
-    
+    Task<IReadOnlyList<OrderOutput?>> GetAllAsync();
+    Task<OrderOutput?> GetByIdAsync(Guid id);
+    Task<IReadOnlyList<OrderOutput?>> GetByCustomerIdAsync(Guid customerId);
+    Task<OrderOutput?> AddOrderAsync(CreateOrderInput order);
+    Task<OrderOutput?> UpdateOrderAsync(UpdateOrderInput order);
+    Task DeleteOrderAsync(Guid id);
 }
