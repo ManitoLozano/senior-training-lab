@@ -8,6 +8,6 @@ public interface IOrderService
     Task<OrderOutput?> GetByIdAsync(Guid id);
     Task<IReadOnlyList<OrderOutput?>> GetByCustomerIdAsync(Guid customerId);
     Task<OrderOutput?> AddOrderAsync(CreateOrderInput order);
-    Task<OrderOutput?> UpdateOrderAsync(UpdateOrderInput order);
+    Task<OrderOutput?> UpdateOrderAsync(Guid id, UpdateOrderInput order);
     Task DeleteOrderAsync(Guid id);
 }

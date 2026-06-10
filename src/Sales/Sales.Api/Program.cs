@@ -1,3 +1,4 @@
+using Sales.Api.Extensions;
 using Sales.Application;
 using Sales.Infrastructure;
 
@@ -16,6 +17,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseApiMiddlewares();
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

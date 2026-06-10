@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Sales.Application.Interfaces.Customers;
-using Sales.Application.Models.Customers;
 using Sales.Domain.Customers;
 using Sales.Infrastructure.Persistence;
 
@@ -21,9 +20,12 @@ public class CustomerRepository(SalesDbContext context) : ICustomerRepository
             .FirstOrDefaultAsync(order => order.Id == id);
     }
 
-    public Task<bool> ExistsByDocumentAsync(string document)
+    public async Task<IReadOnlyList<Customer>> ExistsByEmailOrDocumentAsync(string email, string document)
     {
-        throw new NotImplementedException();
+        return await context.Customers
+            .AsNoTracking()
+            .Where(order => order.Email == email || order.Document == document)
+            .ToListAsync();
     }
 
     public async Task AddAsync(Customer customerInput)
@@ -33,11 +35,6 @@ public class CustomerRepository(SalesDbContext context) : ICustomerRepository
     }
 
     public Task UpdateAsync(Customer customer)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(UpdateCustomerInput customerInput)
     {
         throw new NotImplementedException();
     }

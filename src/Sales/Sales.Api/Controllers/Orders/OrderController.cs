@@ -42,7 +42,17 @@ public class OrderController(IOrderService orderService) : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateOrderDto order)
     {
-        return Ok();
+        var input = new UpdateOrderInput(
+            order.CustomerId,
+            order.OrderItems.Select(item => new UpdateOrderItemInput(
+                item.ProductId,
+                item.Quantity
+            ))
+            .ToList()
+        );
+        
+        var newOrder = await orderService.UpdateOrderAsync(id, input);
+        return Ok(newOrder);
     }
 
     [HttpDelete("{id}")]

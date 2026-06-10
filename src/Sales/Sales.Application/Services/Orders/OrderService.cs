@@ -71,9 +71,17 @@ public class OrderService(
         return createdOrder!.ToOutput();
     }
 
-    public Task<OrderOutput?> UpdateOrderAsync(UpdateOrderInput order)
+    public async Task<OrderOutput?> UpdateOrderAsync(Guid id, UpdateOrderInput input)
     {
-        throw new NotImplementedException();
+        if (input is null) throw new ArgumentNullException(nameof(input), "Order cannot be null");
+        var order = await orderRepository.GetByIdAsync(id);
+        
+        if (order is null) throw new InvalidOperationException("Order not found");
+        
+        // var productsIds = 
+        
+        await orderRepository.UpdateAsync(order);
+        return order.ToOutput();
     }
 
     public async Task DeleteOrderAsync(Guid id)

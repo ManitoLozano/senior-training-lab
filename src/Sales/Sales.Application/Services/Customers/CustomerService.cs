@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using Sales.Application.Interfaces.Customers;
 using Sales.Application.Mappers.Customers;
 using Sales.Application.Models.Customers;
@@ -30,6 +31,18 @@ public class CustomerService(
         
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
+        
+        var conflicts = await customerRepository.ExistsByEmailOrDocumentAsync(input.Email, input.Document);
+        var errors = new List<ValidationFailure>();
+        
+        if (conflicts.Any(customer => customer.Email == input.Email))
+            errors.Add(new ValidationFailure(nameof(input.Email), $"Email {input.Email} is already taken"));
+        
+        if(conflicts.Any(customer => customer.Document == input.Document))
+            errors.Add(new ValidationFailure(nameof(input.Document), $"Document {input.Document} is already taken"));
+        
+        if (errors.Count != 0)
+            throw new ValidationException(errors);
         
         var customer = input.ToEntity();
         await customerRepository.AddAsync(customer);

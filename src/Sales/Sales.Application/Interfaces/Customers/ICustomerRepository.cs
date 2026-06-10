@@ -6,7 +6,7 @@ public interface ICustomerRepository
 {
     Task<IReadOnlyList<Customer?>> GetAllAsync();
     Task<Customer?> GetByIdAsync(Guid id);
-    Task<bool> ExistsByDocumentAsync(string document);
+    Task<IReadOnlyList<Customer>> ExistsByEmailOrDocumentAsync(string email, string document);
     Task AddAsync(Customer customer);
     Task UpdateAsync(Customer customer);
     Task DeleteAsync(Guid id);
