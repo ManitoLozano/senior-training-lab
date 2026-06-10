@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Sales.Domain.Customers;
 using Sales.Domain.Enums.OrderStatus;
 using Sales.Domain.Products;
@@ -30,6 +31,12 @@ public sealed class Order
         CreatedAt = DateTime.UtcNow;
     }
 
+    public void UpdateCustomer(Customer customer)
+    {
+        Customer = customer;
+        CustomerId = customer.Id;
+    }
+
     public void AddItem(Product product, int quantity)
     {
         EnsuranceProduct(product);
@@ -41,6 +48,24 @@ public sealed class Order
         RecalculateTotalAmountOfItems();
     }
 
+    public void UpdateItem(Guid itemId, Product product, int quantity)
+    {
+        EnsuranceProduct(product);
+        EnsuranceQuantity(quantity);
+        
+        var item = _items.FirstOrDefault(i => i.Id == itemId);
+        if (item is null) throw new InvalidOperationException("Item not found");
+        
+        item.Update(product, product.Price, quantity);
+        RecalculateTotalAmountOfItems();
+    }
+
+    public void RemoveItem(Guid itemId)
+    {
+        _items.RemoveAll(i => i.Id == itemId);
+        RecalculateTotalAmountOfItems();
+    }
+
     public void UpdateStatusToCreate()
     {
         Status = OrderStatus.Created;
@@ -48,7 +73,7 @@ public sealed class Order
 
     public void UpdateStatusToConfirm()
     {
-        Status = OrderStatus.Confirmed;    
+        Status = OrderStatus.Confirmed;
     }
     
     public void UpdateStatusToCancel()

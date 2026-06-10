@@ -15,7 +15,6 @@ public sealed class OrderItem
     
     private OrderItem() {}
 
-    // aqui permitimos que apenas order crie seu OrderItem mas sem ele não criamos
     internal OrderItem(Order order, Product product, decimal unitPrice, int quantity)
     {
         EnsurerOrder(order);
@@ -27,6 +26,19 @@ public sealed class OrderItem
         Id = Guid.NewGuid();
         Order = order;
         OrderId = order.Id;
+        Product = product;
+        ProductId = product.Id;
+        UnitPrice = unitPrice;
+        Quantity = quantity;
+        TotalPrice = unitPrice * quantity;
+    }
+
+    internal void Update(Product product, decimal unitPrice, int quantity)
+    {
+        EnsurerProduct(product);
+        EnsurerUnitPrice(unitPrice);
+        EnsurerQuantity(quantity);
+        
         Product = product;
         ProductId = product.Id;
         UnitPrice = unitPrice;

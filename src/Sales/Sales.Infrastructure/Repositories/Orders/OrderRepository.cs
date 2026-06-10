@@ -19,7 +19,7 @@ public class OrderRepository(SalesDbContext dbContext) : IOrderRepository
     }
 
     public async Task<Order?> GetByIdAsync(Guid id)
-    {
+    { 
         return await dbContext.Orders
             .Include(order => order.Customer)
             .Include(order => order.Items)
@@ -39,16 +39,14 @@ public class OrderRepository(SalesDbContext dbContext) : IOrderRepository
         await dbContext.SaveChangesAsync();
     }
 
-    public Task UpdateAsync(Order order)
+    public async Task UpdateAsync(Order order)
     {
-        throw new NotImplementedException();
+        dbContext.Orders.Update(order);
+        await dbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Order order)
     {
-        var order = await GetByIdAsync(id);
-        if (order == null)  return;
-        
         dbContext.Orders.Remove(order);
         await dbContext.SaveChangesAsync();
     }

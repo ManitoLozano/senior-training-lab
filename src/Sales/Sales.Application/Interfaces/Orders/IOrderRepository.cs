@@ -9,5 +9,5 @@ public interface IOrderRepository
     Task<IReadOnlyList<Order?>> GetOrdersByCustomerIdAsync(Guid customerId);
     Task AddAsync(Order order);
     Task UpdateAsync(Order order);
-    Task DeleteAsync(Guid id);
+    Task DeleteAsync(Order order);
 }

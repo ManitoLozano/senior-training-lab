@@ -24,28 +24,17 @@ public sealed class Product
         CreatedAt = DateTime.UtcNow;
     }
 
-    public void SetName(string name)
+    public void IncreaseStockQuantity(int quantity)
     {
-        EnsureName(name);
-        Name = name.Trim();
+        EnsureStockQuantity(quantity);
+        StockQuantity += quantity;
     }
 
-    public void SetDescription(string description)
+    public void DecreaseStockQuantity(int quantity)
     {
-        EnsureDescription(description);
-        Description = description.Trim();
-    }
-
-    public void SetPrice (decimal price)
-    {
-        EnsurePrice(price);
-        Price = price;
-    }
-
-    public void SetStockQuantity(int stockQuantity)
-    {
-        EnsureStockQuantity(stockQuantity);
-        StockQuantity = stockQuantity;
+        EnsureQuantity(quantity);
+        EnsureHasEnoughStockQuantity(quantity);
+        StockQuantity -= quantity;
     }
 
     private static void EnsureName(string name)
@@ -68,7 +57,19 @@ public sealed class Product
 
     private static void EnsureStockQuantity(int stockQuantity)
     {
-        if(stockQuantity <= 0)
+        if(stockQuantity < 0)
+            throw new ArgumentException("Product stock quantity cannot be negative");
+    }
+
+    private void EnsureHasEnoughStockQuantity(int quantity)
+    {
+        if(StockQuantity < quantity)
             throw new ArgumentException("Product stock quantity is required");
+    }
+    
+    private static void EnsureQuantity(int quantity)
+    {
+        if(quantity <= 0)
+            throw new ArgumentException("Product quantity is required");
     }
 }
