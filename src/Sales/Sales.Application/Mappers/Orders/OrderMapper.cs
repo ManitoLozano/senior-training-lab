@@ -16,11 +16,15 @@ public static class OrderMapper
         );
     }
 
-    public static Order ToEntity(this CreateOrderInput orderOutput)
+    public static OrderItemOutput ToOutput(this OrderItem orderItem)
     {
-        return new Order(
-            orderOutput.CustomerId,
-            orderOutput.TotalAmount
+        return new OrderItemOutput(
+            orderItem.Id,
+            orderItem.ProductId,
+            ProductName: orderItem.Product.Name,
+            orderItem.UnitPrice,
+            orderItem.Quantity,
+            orderItem.TotalPrice
         );
     }
 }

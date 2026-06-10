@@ -1,12 +1,17 @@
 using FluentValidation;
+using Sales.Application.Interfaces.Customers;
 using Sales.Application.Interfaces.Orders;
+using Sales.Application.Interfaces.Products;
 using Sales.Application.Mappers.Orders;
 using Sales.Application.Models.Orders;
+using Sales.Domain.Orders;
 
 namespace Sales.Application.Services.Orders;
 
 public class OrderService(
     IOrderRepository orderRepository,
+    ICustomerRepository customerRepository,
+    IProductRepository productRepository,
     IValidator<CreateOrderInput> createOrderValidator
 ) : IOrderService
 {
@@ -19,9 +24,13 @@ public class OrderService(
             .ToList();
     }
 
-    public Task<OrderOutput?> GetByIdAsync(Guid id)
+    public async Task<OrderOutput?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var order = await orderRepository.GetByIdAsync(id);
+        
+        return order is null
+            ? throw new InvalidOperationException("Order not found")
+            : order.ToOutput();
     }
 
     public Task<IReadOnlyList<OrderOutput?>> GetByCustomerIdAsync(Guid customerId)
@@ -35,12 +44,31 @@ public class OrderService(
         
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors);
-
-        var newOrder = order.ToEntity();
-        newOrder.UpdateStatusToCreate();
         
+        var customer = await customerRepository.GetByIdAsync(order.CustomerId);
+        
+        if (customer is null)
+            throw new InvalidOperationException("Customer not found");
+
+        var newOrder = new Order(customer.Id);
+
+        foreach (var item in order.Items)
+        {
+            var product = await productRepository.GetByIdAsync(item.ProductId);
+            
+            if (product is null)
+                throw new InvalidOperationException("Product not found");
+            
+            if (product.StockQuantity <  item.Quantity)
+                throw new InvalidOperationException("Product stock quantity is greater than the available stock quantity");
+            
+            newOrder.AddItem(product, item.Quantity);
+        }
+
         await orderRepository.AddAsync(newOrder);
-        return newOrder.ToOutput();
+        
+        var createdOrder = await orderRepository.GetByIdAsync(newOrder.Id);
+        return createdOrder!.ToOutput();
     }
 
     public Task<OrderOutput?> UpdateOrderAsync(UpdateOrderInput order)
@@ -48,8 +76,11 @@ public class OrderService(
         throw new NotImplementedException();
     }
 
-    public Task DeleteOrderAsync(Guid id)
+    public async Task DeleteOrderAsync(Guid id)
     {
-        throw new NotImplementedException();
+        if (id == Guid.Empty)
+            throw new ArgumentNullException(nameof(id), "Need id to delete");
+        
+        await orderRepository.DeleteAsync(id);
     }
 }

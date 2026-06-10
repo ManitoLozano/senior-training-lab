@@ -13,15 +13,19 @@ public class ProductService(
     public async Task<IReadOnlyList<ProductOutput>> GetAllAsync()
     {
         var products = await  productRepository.GetAllAsync();
-
+        
         return products
             .Select(p => p.ToOutput())
             .ToList();
     }
 
-    public Task<ProductOutput> GetByIdAsync(int id)
+    public async Task<ProductOutput> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var product = await productRepository.GetByIdAsync(id);
+        
+        return product == null
+            ? throw new InvalidOperationException("Product not found")
+            : product.ToOutput();
     }
 
     public async Task<ProductOutput> AddAsync(CreateProductInput input)
@@ -42,8 +46,11 @@ public class ProductService(
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var product = await productRepository.GetByIdAsync(id);
+        if (product == null) throw new InvalidOperationException("Product not found");
+        
+        await productRepository.DeleteAsync(product);
     }
 }

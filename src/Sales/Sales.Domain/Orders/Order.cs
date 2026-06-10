@@ -19,15 +19,14 @@ public sealed class Order
     // Cópia dos itens do order onde podemos apenas usar pra leituras, mas não manipular eles 
     public  IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
 
-    public Order(Guid customerId,  decimal totalAmount)
+    public Order(Guid customerId)
     {
         EnsuranceCustomerId(customerId);
-        EnsuranceTotalAmount(totalAmount);
         
         Id = Guid.NewGuid();
         CustomerId = customerId;
         Status = OrderStatus.Created;
-        TotalAmount = totalAmount;
+        TotalAmount = 0;
         CreatedAt = DateTime.UtcNow;
     }
 
@@ -62,12 +61,6 @@ public sealed class Order
         Status = OrderStatus.SentToFulfillment;
     }
 
-    public void SetTotalAmount(decimal totalAmount)
-    {
-        EnsuranceTotalAmount(totalAmount);
-        TotalAmount = totalAmount;
-    }
-
     private void RecalculateTotalAmountOfItems()
     {
         TotalAmount = _items.Sum(item => item.TotalPrice);
@@ -77,12 +70,6 @@ public sealed class Order
     {
         if (customerId == Guid.Empty)
             throw new ArgumentException("CustomerId cannot be empty", nameof(customerId));
-    }
-
-    private static void EnsuranceTotalAmount(decimal totalAmount)
-    {
-        if(totalAmount <= 0)
-            throw new ArgumentException("Total amount need to be positive");
     }
 
     private static void EnsuranceProduct(Product product)

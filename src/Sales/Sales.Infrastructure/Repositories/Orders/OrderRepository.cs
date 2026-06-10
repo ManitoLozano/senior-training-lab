@@ -10,15 +10,22 @@ public class OrderRepository(SalesDbContext dbContext) : IOrderRepository
     public async Task<IReadOnlyList<Order>> GetAllOrdersAsync()
     {
         return await dbContext.Orders
-            .AsNoTracking()
             .Include(order => order.Customer)
+            .Include(order => order.Items)
+            .ThenInclude(orderItem => orderItem.Product)
+            .AsNoTracking()
             .OrderByDescending(order => order.CreatedAt)
             .ToListAsync();
     }
 
-    public Task<Order?> GetByIdAsync(Guid id)
+    public async Task<Order?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await dbContext.Orders
+            .Include(order => order.Customer)
+            .Include(order => order.Items)
+            .ThenInclude(orderItem => orderItem.Product)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(order => order.Id == id);
     }
 
     public Task<IReadOnlyList<Order?>> GetOrdersByCustomerIdAsync(Guid customerId)
@@ -28,7 +35,7 @@ public class OrderRepository(SalesDbContext dbContext) : IOrderRepository
 
     public async Task AddAsync(Order order)
     {
-        await dbContext.Orders.AddAsync(order);
+        dbContext.Orders.Add(order);
         await dbContext.SaveChangesAsync();
     }
 
@@ -37,8 +44,12 @@ public class OrderRepository(SalesDbContext dbContext) : IOrderRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var order = await GetByIdAsync(id);
+        if (order == null)  return;
+        
+        dbContext.Orders.Remove(order);
+        await dbContext.SaveChangesAsync();
     }
 }

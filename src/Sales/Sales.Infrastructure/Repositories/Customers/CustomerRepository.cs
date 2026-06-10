@@ -15,9 +15,10 @@ public class CustomerRepository(SalesDbContext context) : ICustomerRepository
             .ToListAsync();
     }
 
-    public Task<Customer?> GetByIdAsync(Guid id)
+    public async Task<Customer?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await context.Customers
+            .FirstOrDefaultAsync(order => order.Id == id);
     }
 
     public Task<bool> ExistsByDocumentAsync(string document)

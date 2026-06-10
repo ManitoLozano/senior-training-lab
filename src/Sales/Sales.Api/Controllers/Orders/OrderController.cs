@@ -27,7 +27,12 @@ public class OrderController(IOrderService orderService) : Controller
     {
         var input = new CreateOrderInput(
             order.CustomerId,
-            order.TotalAmount
+            order.OrderItems
+                .Select(item => new CreateOrderItemInput(
+                    item.ProductId,
+                    item.Quantity
+                ))
+                .ToList()
         );
         
         var newOrder = await orderService.AddOrderAsync(input);

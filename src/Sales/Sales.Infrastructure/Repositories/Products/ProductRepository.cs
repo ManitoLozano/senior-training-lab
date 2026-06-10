@@ -14,14 +14,14 @@ public class ProductRepository(SalesDbContext context): IProductRepository
             .ToListAsync();
     }
 
-    public Task<Product?> GetByIdAsync(Guid id)
+    public async Task<Product?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await context.Products.FindAsync(id);
     }
 
     public async Task AddAsync(Product product)
     {
-        await context.Products.AddAsync(product);
+        context.Products.Add(product);
         await context.SaveChangesAsync();
     }
 
@@ -30,8 +30,9 @@ public class ProductRepository(SalesDbContext context): IProductRepository
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(Product product)
+    public async Task DeleteAsync(Product product)
     {
-        throw new NotImplementedException();
+        context.Products.Remove(product);
+        await context.SaveChangesAsync();
     }
 }
