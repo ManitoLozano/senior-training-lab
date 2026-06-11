@@ -1,5 +1,8 @@
 using FluentValidation;
+using Sales.Application.Events;
+using Sales.Application.Events.Orders;
 using Sales.Application.Interfaces.Customers;
+using Sales.Application.Interfaces.Messaging;
 using Sales.Application.Interfaces.Orders;
 using Sales.Application.Interfaces.Products;
 using Sales.Application.Mappers.Orders;
@@ -13,7 +16,8 @@ public class OrderService(
     IOrderRepository orderRepository,
     ICustomerRepository customerRepository,
     IProductRepository productRepository,
-    IValidator<CreateOrderInput> createOrderValidator
+    IValidator<CreateOrderInput> createOrderValidator,
+    IEventPublisher eventPublisher
 ) : IOrderService
 {
     public async Task<IReadOnlyList<OrderOutput?>> GetAllAsync()
@@ -39,7 +43,7 @@ public class OrderService(
         throw new NotImplementedException();
     }
 
-    public async Task<OrderOutput?> AddOrderAsync(CreateOrderInput order)
+    public async Task<OrderOutput> AddOrderAsync(CreateOrderInput order)
     {
         var validationResult = await createOrderValidator.ValidateAsync(order);
         if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
@@ -54,19 +58,21 @@ public class OrderService(
             var product = await productRepository.GetByIdAsync(item.ProductId);
             
             if (product is null) throw new KeyNotFoundException("Product not found");
-            if (product.StockQuantity <  item.Quantity) throw new InvalidOperationException("Product stock quantity is greater than the available stock quantity");
+            if (product.StockQuantity <  item.Quantity) throw new InvalidOperationException("Product stock quantity is lower than the available stock quantity");
             
             newOrder.AddItem(product, item.Quantity);
         }
 
         newOrder.UpdateStatusToCreate();
+        
         await orderRepository.AddAsync(newOrder);
+        await PublishOrderIntegrationEvent(newOrder);
         
         var createdOrder = await orderRepository.GetByIdAsync(newOrder.Id);
         return createdOrder!.ToOutput();
     }
 
-    public async Task<OrderOutput?> UpdateOrderAsync(Guid id, UpdateOrderInput input)
+    public async Task<OrderOutput> UpdateOrderAsync(Guid id, UpdateOrderInput input)
     {
         if (input is null) throw new ArgumentNullException(nameof(input), "Order cannot be null");
         
@@ -152,7 +158,6 @@ public class OrderService(
         foreach (var item in items)
         {
             var product =  await productRepository.GetByIdAsync(item.ProductId);
-            
             if (product is null) throw new KeyNotFoundException("Product not found");
             
             if (product.StockQuantity < item.Quantity)
@@ -189,5 +194,24 @@ public class OrderService(
         {
             order.RemoveItem(itemId);
         }
+    }
+
+    private async Task PublishOrderIntegrationEvent(Order order)
+    {
+        var orderCreatedEvent = new OrderCreatedIntegrationEvent(
+            EventId: Guid.NewGuid(),
+            OrderId: order.Id,
+            CustomerId: order.CustomerId,
+            OcurredAt: DateTime.UtcNow,
+            Items: order.Items
+                .Select(item => new OrderCreatedItemIntregationEvent(
+                    ProductId: item.ProductId,
+                    Quantity: item.Quantity,
+                    UnitPrice: item.UnitPrice
+                ))
+                .ToList()
+        );
+        
+        await eventPublisher.PublishAsync(orderCreatedEvent, IntegrationEventRoutingKeys.OrderCreated);
     }
 }
