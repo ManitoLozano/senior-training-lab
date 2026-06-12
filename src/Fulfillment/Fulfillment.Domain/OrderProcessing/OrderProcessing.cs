@@ -1,8 +1,8 @@
-namespace Fulfillment.Domain;
+namespace Fulfillment.Domain.OrderProcessing;
 
 public sealed class OrderProcessing
 {
-    private readonly List<OrderProcessingHistory> _history;
+    private readonly List<OrderProcessingHistory> _history = new();
     
     public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
@@ -36,7 +36,7 @@ public sealed class OrderProcessing
         AddHistory(Status, reason);
     }
 
-    public void AddHistory(string status, string description)
+    private void AddHistory(string status, string description)
     {
         _history.Add(new OrderProcessingHistory(Id, status, description));
     }
