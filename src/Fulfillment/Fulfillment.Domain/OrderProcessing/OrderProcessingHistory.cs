@@ -1,4 +1,4 @@
-namespace Fulfillment.Domain;
+namespace Fulfillment.Domain.OrderProcessing;
 
 public class OrderProcessingHistory
 {

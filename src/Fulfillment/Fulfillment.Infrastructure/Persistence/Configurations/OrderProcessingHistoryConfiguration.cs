@@ -1,4 +1,5 @@
 using Fulfillment.Domain;
+using Fulfillment.Domain.OrderProcessing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
