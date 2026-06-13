@@ -5,14 +5,13 @@ using Fulfillment.Application.Handlers.Commands.OrderProcessings;
 using Fulfillment.Application.Handlers.Queries.OrderProcessings;
 using Fulfillment.Application.Queries.OrderProcessing;
 using Fulfillment.Application.Responses;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Fulfillment.Application.IoC;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddFulfillmentApplication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddFulfillmentApplication(this IServiceCollection services)
     {
         services.AddScoped<IDispatcher, Dispatcher>();
         services.AddScoped<ICommandHandler<CreateOrderProcessingCommand>, CreateOrderProcessingCommandHandler>();
@@ -21,11 +20,11 @@ public static class DependencyInjection
         services.AddScoped<IQueryHandler<GetOrderProcessingByIdQuery, OrderProcessingResponse?>, GetOrderProcessingByIdQueryHandler>();
         services.AddScoped<IQueryHandler<GetOrderProcessingByOrderIdQuery, OrderProcessingResponse?>, GetOrderProcessingByOrderIdQueryHandler>();
         services
-            .AddScoped<IQueryHandler<GetOrderProcessingByStatusQuery, IReadOnlyList<OrderProcessingResponse?>>,
+            .AddScoped<IQueryHandler<GetOrderProcessingByStatusQuery, IReadOnlyList<OrderProcessingResponse>>,
                 GetOrderProcessingByStatusQueryHandler>();
         services
             .AddScoped<IQueryHandler<GetOrderProcessingHistoriesByOrderProcessingIdQuery,
-                IReadOnlyList<OrderProcessingHistoryResponse?>>, GetOrderProcessingHistoriesByOrderProcessingIdQueryHandler>();
+                IReadOnlyList<OrderProcessingHistoryResponse>>, GetOrderProcessingHistoriesByOrderProcessingIdQueryHandler>();
 
         return services;
     }
