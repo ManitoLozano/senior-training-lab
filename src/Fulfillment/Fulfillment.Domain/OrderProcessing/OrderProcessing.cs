@@ -2,7 +2,7 @@ namespace Fulfillment.Domain.OrderProcessing;
 
 public sealed class OrderProcessing
 {
-    private readonly List<OrderProcessingHistory> _history = new();
+    private readonly List<OrderProcessingHistory> _history = [];
     
     public Guid Id { get; private set; }
     public Guid OrderId { get; private set; }
@@ -32,6 +32,7 @@ public sealed class OrderProcessing
 
     public void Fail(string reason)
     {
+        if (string.IsNullOrWhiteSpace(reason)) throw new ArgumentNullException(nameof(reason), "The reason cannot be null or whitespace.");
         Status = "Failed";
         AddHistory(Status, reason);
     }

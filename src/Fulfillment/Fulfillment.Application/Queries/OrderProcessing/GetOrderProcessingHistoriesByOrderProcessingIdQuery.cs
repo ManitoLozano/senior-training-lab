@@ -3,4 +3,4 @@ using Fulfillment.Application.Responses;
 
 namespace Fulfillment.Application.Queries.OrderProcessing;
 
-public sealed record GetOrderProcessingByOrderIdQuery(Guid OrderId): IQuery<OrderProcessingResponse?>;
+public sealed record GetOrderProcessingHistoriesByOrderProcessingIdQuery(Guid OrderProcessingId): IQuery<IReadOnlyList<OrderProcessingHistoryResponse?>>;
