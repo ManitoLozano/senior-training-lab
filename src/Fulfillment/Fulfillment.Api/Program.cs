@@ -1,13 +1,13 @@
-using Sales.Application;
-using Sales.Infrastructure;
+using Fulfillment.Application.IoC;
+using Fulfillment.Infrastructure.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-builder.Services.AddSalesApplication(builder.Configuration);
-builder.Services.AddSalesInfraestructure(builder.Configuration);
+builder.Services.AddFulfillmentApplication();
+builder.Services.AddFulfillmentInfraestructure(builder.Configuration);
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment()) app.MapOpenApi();
