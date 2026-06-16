@@ -8,5 +8,6 @@ public sealed record OrderProcessingResponse(
     string Status,
     DateTime CreatedAt,
     DateTime? CompletedAt,
-    IReadOnlyList<OrderProcessingHistoryResponse> History
+    IReadOnlyList<OrderProcessingHistoryResponse> History,
+    IReadOnlyList<OrderProcessingItemResponse> Items
 );

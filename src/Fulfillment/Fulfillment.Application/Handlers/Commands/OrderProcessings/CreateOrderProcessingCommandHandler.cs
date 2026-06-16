@@ -12,7 +12,14 @@ public sealed class CreateOrderProcessingCommandHandler(IOrderProcessingReposito
         var existingOrderProcessing = await orderProcessingRepository.GetByOrderIdAsync(command.OrderId);
         if (existingOrderProcessing is not null) return;
 
-        var orderProcessing = new OrderProcessing(command.OrderId);
+        var items = command.Items
+            .Select(item => new OrderProcessingItemData(
+                item.ProductId,
+                item.Quantity,
+                item.UnitPrice
+            )).ToList();
+
+        var orderProcessing = new OrderProcessing(command.OrderId, items);
         await orderProcessingRepository.AddAsync(orderProcessing);
     }
 }

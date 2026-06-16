@@ -45,7 +45,14 @@ public class OrderProcessingController(IDispatcher dispatcher) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateOrderProcessingRequest request)
     {
-        var command = new CreateOrderProcessingCommand(request.OrderId);
+        var command = new CreateOrderProcessingCommand(
+            request.OrderId,
+            request.Items.Select(item => new CreateOrderProcessingItemCommand(
+                item.ProductId,
+                item.Quantity,
+                item.UnitPrice
+            )).ToList()
+        );
         await dispatcher.SendAsync(command);
         return Accepted();
     }

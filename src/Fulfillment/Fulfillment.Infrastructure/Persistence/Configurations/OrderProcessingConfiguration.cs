@@ -36,5 +36,16 @@ public class OrderProcessingConfiguration: IEntityTypeConfiguration<OrderProcess
             .WithOne()
             .HasForeignKey(orderProcessing => orderProcessing.OrderProcessingId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasMany(orderProcessing => orderProcessing.Items)
+            .WithOne()
+            .HasForeignKey(orderProcessing => orderProcessing.OrderProcessingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Navigation(orderProcessing => orderProcessing.Histories)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+        
+        builder.Navigation(orderProcessing => orderProcessing.Items)
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }

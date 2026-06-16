@@ -24,6 +24,12 @@ public class GetOrderProcessingByStatusQueryHandler(IOrderProcessingRepository r
               history.Status,
               history.Description,
               history.CreatedAt
+            )).ToList(),
+            orderProcessing.Items.Select(item => new OrderProcessingItemResponse(
+                item.ProductId,
+                item.Quantity,
+                item.UnitPrice,
+                item.TotalPrice
             )).ToList()
         )).ToList();
     }

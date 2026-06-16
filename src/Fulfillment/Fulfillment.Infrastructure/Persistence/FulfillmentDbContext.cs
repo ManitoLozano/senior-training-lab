@@ -11,6 +11,7 @@ public class FulfillmentDbContext: DbContext
     
     public DbSet<OrderProcessing> OrderProcessings => Set<OrderProcessing>();
     public DbSet<OrderProcessingHistory> OrderProcessingHistory => Set<OrderProcessingHistory>();
+    public DbSet<OrderProcessingItem> OrderProcessingItems => Set<OrderProcessingItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -11,6 +11,7 @@ public sealed class OrderProcessingRepository(FulfillmentDbContext dbContext): I
     {
         return await dbContext.OrderProcessings
             .Include(orderProcessing => orderProcessing.Histories)
+            .Include(orderProcessing => orderProcessing.Items)
             .FirstOrDefaultAsync(orderProcessing => orderProcessing.Id == orderProcessingId);
     }
     
@@ -18,6 +19,7 @@ public sealed class OrderProcessingRepository(FulfillmentDbContext dbContext): I
     {
         return await dbContext.OrderProcessings
             .Include(orderProcessing => orderProcessing.Histories)
+            .Include(orderProcessing => orderProcessing.Items)
             .FirstOrDefaultAsync(history => history.OrderId == orderId);
     }
 
@@ -26,6 +28,7 @@ public sealed class OrderProcessingRepository(FulfillmentDbContext dbContext): I
         return await dbContext.OrderProcessings
             .Where(orderProcessing => orderProcessing.Status == status)
             .Include(orderProcessing => orderProcessing.Histories)
+            .Include(orderProcessing => orderProcessing.Items)
             .ToListAsync();
     }
 

@@ -9,7 +9,7 @@ public class GetOrderProcessingByIdQueryHandler(IOrderProcessingRepository order
 {
     public async Task<OrderProcessingResponse?> HandleAsync(GetOrderProcessingByIdQuery query)
     {
-        var orderProcessing = await orderProcessingRepository.GetByOrderIdAsync(query.Id);
+        var orderProcessing = await orderProcessingRepository.GetByIdAsync(query.Id);
         if(orderProcessing is null) return null;
         
         return new OrderProcessingResponse(
@@ -24,6 +24,12 @@ public class GetOrderProcessingByIdQueryHandler(IOrderProcessingRepository order
                 history.Status,
                 history.Description,
                 history.CreatedAt
+            )).ToList(),
+            orderProcessing.Items.Select(item => new OrderProcessingItemResponse(
+                item.ProductId,
+                item.Quantity,
+                item.UnitPrice,
+                item.TotalPrice
             )).ToList()
         );
     }
